@@ -12,7 +12,7 @@ import javafx.stage.StageStyle;
 /**
  * FileChooserを開いて取得したファイルを保持するクラス。
  * @author jiro
- * @version 1.0
+ * @version 1.1
  */
 public class FileChooserManager {
   private File file;
@@ -29,6 +29,16 @@ public class FileChooserManager {
   }
 
   /**
+   * 初期参照ファイルパスを渡すコンストラクタ。
+   * @param aFilePath 初期ファイル名
+   * @param aDescription 説明文
+   * @param aExtension 対象拡張子
+   */
+  public FileChooserManager(String aFilePath, String aDescription, String aExtension) {
+    this(new File(aFilePath), aDescription, aExtension);
+  }
+
+  /**
    * 初期参照ファイルを渡すコンストラクタ。
    * @param aFile 初期ファイル
    * @param aDescription 説明文
@@ -38,20 +48,14 @@ public class FileChooserManager {
     file = aFile;
     fc = new FileChooser();
     fc.getExtensionFilters().add(new ExtensionFilter(aDescription, aExtension));
-    if (file != null)
-      fc.setInitialDirectory(file.getParentFile().getParentFile());
-    else
-      fc.setInitialDirectory(new File("."));
-  }
 
-  /**
-   * 初期参照ファイルパスを渡すコンストラクタ。
-   * @param aFilePath 初期ファイル名
-   * @param aDescription 説明文
-   * @param aExtension 対象拡張子
-   */
-  public FileChooserManager(String aFilePath, String aDescription, String aExtension) {
-    this(new File(aFilePath), aDescription, aExtension);
+    // @formatter:off
+    File dir =
+        (file != null && file.exists()) ?
+            file.isDirectory() ? file : file.getParentFile()
+        : new File(".");
+    // @formatter:on
+    fc.setInitialDirectory(dir);
   }
 
   /**
